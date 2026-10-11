@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#7661d3">
+  <meta name="description" content="IconLab 照片转图标工具。图片在浏览器中转换，支持多尺寸 ICO、PNG、透明背景、自定义尺寸与批量下载。">
+  <title>IconLab · 照片转图标</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./core.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+<svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 16 5-5 4 4 3-3 6 6"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V3m-4 4 4-4 4 4M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4m-6 7-1 1a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0m0 12a4 4 0 0 0 6 0l5-5a4 4 0 0 0-6-6l-1 1" transform="translate(1 0) scale(.92)"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8m-8 4h5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2 7M3 4v7h7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6Z"/></symbol>
+  <symbol id="i-zip" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6m-9-6v2m0 2v2m0 2v2m-1 3h2v3h-2Z"/></symbol>
+</svg>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="./" class="brand" aria-label="IconLab 首页">
+      <span class="brand-mark"><svg class="icon"><use href="#i-image"/></svg></span>
+      <span>Icon<span class="brand-light">Lab</span></span>
+      <span class="brand-caption">图标工坊</span>
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a class="nav-active" href="#workspace">转换工作台</a>
+      <button type="button" data-open-help>使用指南</button>
+    </nav>
+    <span class="privacy-badge"><svg class="icon"><use href="#i-shield"/></svg>本地处理，安心转换</span>
+  </div>
+</header>
+
+<main class="page-shell">
+  <div id="notice" class="notice" role="status" aria-live="polite" hidden>
+    <svg class="icon"><use href="#i-info"/></svg><span id="notice-text"></span>
+    <button type="button" id="dismiss-notice" class="icon-button" aria-label="关闭提示"><svg class="icon"><use href="#i-x"/></svg></button>
+  </div>
+
+  <section id="workspace" class="workspace" aria-label="图标转换工作台">
+    <div class="setup-column">
+      <section class="card upload-card">
+        <div class="card-heading">
+          <h2><span class="step-badge">01</span>导入图片</h2>
+          <span class="subtle" id="queue-count">从一张照片开始</span>
+        </div>
+        <div class="source-tabs" role="tablist" aria-label="图片来源">
+          <button type="button" id="file-tab" class="source-tab active" role="tab" aria-selected="true" aria-controls="file-panel"><svg class="icon"><use href="#i-upload"/></svg>本地文件</button>
+          <button type="button" id="link-tab" class="source-tab" role="tab" aria-selected="false" aria-controls="link-panel" tabindex="-1"><svg class="icon"><use href="#i-link"/></svg>图片链接</button>
+        </div>
+        <div id="file-panel" role="tabpanel" aria-labelledby="file-tab">
+          <input type="file" id="file-input" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml,image/bmp,image/x-icon,image/avif,.heic,.heif" multiple hidden>
+          <button type="button" class="drop-zone" id="drop-zone">
+            <span class="upload-symbol"><svg class="icon"><use href="#i-image"/></svg><span>+</span></span>
+            <span class="drop-title">拖拽图片到这里，或<span class="text-purple">点击上传</span></span>
+            <span class="drop-subtitle">支持多张图片 · 单张最大 20 MB</span>
+          </button>
+        </div>
+        <div id="link-panel" role="tabpanel" aria-labelledby="link-tab" hidden>
+          <label for="image-url" class="field-label">图片地址</label>
+          <div class="url-row"><input type="url" id="image-url" placeholder="https://example.com/photo.png" autocomplete="off"><button type="button" class="button button-primary" id="load-url">导入</button></div>
+          <p class="field-hint">请输入图片直链。来源网站需允许跨域读取。</p>
+        </div>
+        <div id="source-list" class="source-list" aria-label="已导入图片"></div>
+        <div class="upload-bottom"><span>JPG · PNG · GIF · WEBP · SVG · HEIC</span><button id="load-sample" type="button" class="text-button"><svg class="icon"><use href="#i-sparkle"/></svg>试用示例</button></div>
+      </section>
+
+      <section class="card settings-card">
+        <div class="card-heading"><h2><span class="step-badge">02</span>设置图标</h2><span class="subtle">按你的需要来</span></div>
+        <label class="field-label" for="output-type">图标类型</label>
+        <select id="output-type">
+          <option value="multi">多分辨率 ICO · 多个尺寸合为一个文件</option>
+          <option value="single">独立 ICO · 每个尺寸一个文件</option>
+          <option value="png">PNG 图标 · 每个尺寸一个文件</option>
+        </select>
+        <div class="label-row"><span class="field-label" id="size-label">图标尺寸 <span class="label-note">px</span></span><div class="preset-buttons"><button type="button" class="text-button" id="common-sizes">常用</button><span>·</span><button type="button" class="text-button" id="all-sizes">全选</button></div></div>
+        <div id="size-options" class="size-grid" role="group" aria-labelledby="size-label"></div>
+        <div class="custom-size-row"><label class="custom-checkbox"><input type="checkbox" id="custom-enabled"><span>自定义尺寸</span></label><input id="custom-sizes" type="text" aria-label="自定义尺寸，宽x高，用逗号分隔" placeholder="例如 30x30, 60x60" disabled></div>
+        <p class="field-hint">宽高范围 16–256 px，多个尺寸用逗号分隔。</p>
+        <div class="conversion-actions"><button type="button" class="button button-primary convert-button" id="convert-button" disabled><svg class="icon"><use href="#i-sparkle"/></svg><span id="convert-button-text">开始转换</span><svg class="icon arrow-right"><use href="#i-arrow"/></svg></button><button type="button" class="button button-reset" id="reset-button"><svg class="icon"><use href="#i-reset"/></svg>重置</button></div>
+        <p class="convert-summary" id="convert-summary">选择图片后，即可开始转换</p>
+      </section>
+    </div>
+
+    <div class="preview-column">
+      <section class="card preview-card">
+        <div class="card-heading"><h2>实时预览<span class="live-dot"></span></h2><span class="preview-chip" id="preview-chip">示例图片</span></div>
+        <div class="preview-stage checkerboard" id="preview-stage">
+          <div class="background-controls" role="group" aria-label="预览背景">
+            <button type="button" data-preview-bg="transparent" class="bg-swatch swatch-checker selected" aria-label="透明背景预览" aria-pressed="true"></button>
+            <button type="button" data-preview-bg="white" class="bg-swatch swatch-white" aria-label="白色背景预览" aria-pressed="false"></button>
+            <button type="button" data-preview-bg="dark" class="bg-swatch swatch-dark" aria-label="深色背景预览" aria-pressed="false"></button>
+          </div>
+          <canvas id="main-preview" width="256" height="256" role="img" aria-label="图标实时预览"></canvas>
+          <span class="preview-dimension" id="preview-dimension">256 × 256</span>
+          <span class="preview-stage-note" id="preview-stage-note">上传图片，看看你的图标</span>
+        </div>
+        <div class="mini-previews">
+          <div><div class="mini-icon-slot"><canvas data-mini-size="16" width="16" height="16" role="img" aria-label="16 像素预览"></canvas></div><span>16 × 16</span></div>
+          <div><div class="mini-icon-slot"><canvas data-mini-size="32" width="32" height="32" role="img" aria-label="32 像素预览"></canvas></div><span>32 × 32</span></div>
+          <div><div class="mini-icon-slot"><canvas data-mini-size="48" width="48" height="48" role="img" aria-label="48 像素预览"></canvas></div><span>48 × 48</span></div>
+          <div><div class="mini-icon-slot"><canvas data-mini-size="64" width="64" height="64" role="img" aria-label="64 像素预览"></canvas></div><span>64 × 64</span></div>
+          <div class="actual-size-note"><svg class="icon"><use href="#i-check"/></svg><span>实际尺寸<br>清晰可见</span></div>
+        </div>
+        <div class="adjustments">
+          <div class="adjustment-row"><span class="field-label">图片适配</span><div class="segmented-control" role="group" aria-label="图片适配方式"><button type="button" data-fit="cover" class="active" aria-pressed="true">居中裁剪</button><button type="button" data-fit="contain" aria-pressed="false">完整保留</button></div></div>
+          <div class="adjustment-row"><label class="field-label" for="corner-radius">圆角</label><div class="range-control"><input type="range" id="corner-radius" min="0" max="50" value="0"><output id="radius-value" for="corner-radius">0%</output></div></div>
+          <div class="adjustment-row"><span class="field-label">图标背景</span><div class="background-setting"><label class="custom-checkbox"><input type="checkbox" id="transparent-bg" checked><span>保持透明</span></label><label class="color-picker" title="背景颜色"><input type="color" id="background-color" value="#ffffff" disabled aria-label="图标背景颜色"><span>底色</span></label></div></div>
+        </div>
+        <p class="preview-footnote"><svg class="icon"><use href="#i-info"/></svg>预览背景仅用于查看效果，导出以图标背景设置为准。</p>
+      </section>
+      <aside class="tip-card"><span class="tip-symbol"><svg class="icon"><use href="#i-sparkle"/></svg></span><div><h3>一个文件，多种用途</h3><p>多分辨率 ICO 会将所选尺寸打包在同一个图标里，适合 Windows 快捷方式、应用图标和网站 favicon。</p></div></aside>
+    </div>
+  </section>
+
+  <section class="card results-card" aria-labelledby="results-heading">
+    <div class="card-heading results-heading"><h2 id="results-heading"><svg class="icon"><use href="#i-download"/></svg>转换结果<span class="result-count" id="result-count">0</span></h2><div class="result-actions"><button type="button" class="text-button" id="clear-results" hidden>清空结果</button><button type="button" class="button button-outline" id="download-all" disabled><svg class="icon"><use href="#i-zip"/></svg>打包下载</button></div></div>
+    <div id="results-empty" class="results-empty"><span class="empty-icon"><svg class="icon"><use href="#i-file"/></svg><span><svg class="icon"><use href="#i-check"/></svg></span></span><div><h3>你的新图标，即将在这里出现</h3><p>导入图片，选择尺寸，点击「开始转换」就好了。</p></div><span class="empty-decoration" aria-hidden="true">.ico</span></div>
+    <div class="results-table-wrap" id="results-table-wrap" hidden><table><thead><tr><th scope="col">输出文件</th><th scope="col">源图片</th><th scope="col">尺寸 / 大小</th><th scope="col" class="align-right">操作</th></tr></thead><tbody id="results-body"></tbody></table></div>
+  </section>
+
+  <section id="guide" class="guide-section" aria-label="使用步骤">
+    <div class="guide-heading"><h2>三步，完成你的图标</h2><span>简单的工具，也可以很顺手。</span></div>
+    <div class="guide-grid">
+      <div class="guide-item"><span>1</span><div><h3>选一张喜欢的图片</h3><p>上传本地照片，或粘贴图片链接。带透明背景的 PNG、SVG 也能保留透明效果。</p></div></div>
+      <div class="guide-item"><span>2</span><div><h3>给它一个合适的尺寸</h3><p>选择常用尺寸或自定义宽高，还可以调整图片适配、圆角和图标底色。</p></div></div>
+      <div class="guide-item"><span>3</span><div><h3>转换，然后带走</h3><p>单独下载生成的图标，或一次打包全部结果。所有图片都在你的浏览器内处理。</p></div></div>
+    </div>
+  </section>
+
+  <details class="about-ico" id="about"><summary>关于 ICO 图标文件 <svg class="icon"><use href="#i-info"/></svg></summary><p>ICO 是常见的 Windows 图标格式，一个文件可以包含多张不同尺寸的图像。系统会根据显示场景选用合适的尺寸。本工具输出带 Alpha 透明通道的 32 位图标，支持 16–256 像素的自定义宽高。GIF 与动态 WEBP 使用第一帧生成静态图标。原图中的背景不会自动移除，可上传已有透明背景的图片。</p></details>
+</main>
+
+<footer class="site-footer"><div><a class="footer-brand" href="./">IconLab</a><span>给好照片一个新身份。</span></div><span><svg class="icon"><use href="#i-shield"/></svg>无需注册 · 图片不上传 · 免费使用</span></footer>
+
+<dialog id="help-dialog" class="help-dialog">
+  <div class="dialog-heading"><h2>使用指南</h2><button type="button" id="close-help" class="icon-button" aria-label="关闭使用指南"><svg class="icon"><use href="#i-x"/></svg></button></div>
+  <ol><li><strong>导入图片</strong><p>点击上传、拖拽文件，或切换到「图片链接」导入图片直链。最多同时导入 20 张，每张不超过 20 MB。</p></li><li><strong>选择类型与尺寸</strong><p>「多分辨率 ICO」每张图片生成一个文件；「独立 ICO」和「PNG 图标」每个尺寸生成一个文件。自定义格式如 30x30, 60x60，宽高均为 16–256。</p></li><li><strong>预览与下载</strong><p>在右侧调整居中裁剪、完整保留、圆角和背景，点击「开始转换」，从结果列表下载或打包为 ZIP。</p></li></ol>
+  <div class="help-note"><svg class="icon"><use href="#i-info"/></svg><p>GIF 和动态 WEBP 使用第一帧。HEIC / HEIF 首次导入会加载本地解码器。链接导入需要图片网站允许跨域读取；如遇限制，可先保存图片再上传。本工具不会自动去除原图背景。</p></div>
+  <button type="button" id="help-done" class="button button-primary">开始制作</button>
+</dialog>
+<noscript><p class="noscript-message">请启用 JavaScript 后使用照片转图标工具。</p></noscript>
+</body>
+</html>

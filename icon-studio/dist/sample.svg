@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<defs>
+<linearGradient id="sky" x2="0" y2="1"><stop stop-color="#dce9db"/><stop offset="1" stop-color="#f0f2db"/></linearGradient>
+<linearGradient id="hill" x2="0.5" y2="1"><stop stop-color="#778d77"/><stop offset="1" stop-color="#485f50"/></linearGradient>
+<clipPath id="frame"><rect width="512" height="512" rx="104"/></clipPath>
+</defs>
+<g clip-path="url(#frame)">
+<rect width="512" height="512" fill="url(#sky)"/>
+<circle cx="352" cy="148" r="57" fill="#e4bb7b"/>
+<path d="M-20 350 154 126 362 408 512 302V512H-20Z" fill="#a4b49b"/>
+<path d="m154 126-48 64 48-17 40 39Z" fill="#f4f3df"/>
+<path d="M-24 477 285 203 550 453V530H-24Z" fill="url(#hill)"/>
+<path d="m285 203-52 48 51-14 62 23Z" fill="#dce4cf"/>
+<path d="M-20 445Q90 376 245 444T540 412V540H-20Z" fill="#365447"/>
+<path d="M-10 499Q118 430 270 502T536 468V550H-10Z" fill="#294638"/>
+<path d="M355 422c-4 33-21 43-43 58" fill="none" stroke="#b8c69e" stroke-width="5" stroke-linecap="round"/>
+<path d="M340 451q-24-2-20-21 22-1 20 21Zm-8 11q28-2 25-21-22-1-25 21Z" fill="#b8c69e"/>
+</g></svg>

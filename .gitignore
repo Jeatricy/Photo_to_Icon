@@ -1,0 +1,13 @@
+.github-publish/
+**/node_modules/
+**/.openai/
+**/artifacts/
+**/.sites-local/
+**/.sites-tmp/
+**/.sites-checkout/
+**/*.tar.gz
+**/.env
+**/.env.*
+!**/.env.example
+Thumbs.db
+.DS_Store
